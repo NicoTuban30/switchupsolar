@@ -12,7 +12,7 @@ router = APIRouter(
 
 # CREATE A USER
 @router.post("/", status_code=status.HTTP_201_CREATED)
-def create_user(request: schemas.UserBase, db: Session = Depends(get_db)):
+async def create_user(request: schemas.UserBase, db: Session = Depends(get_db)):
     new_user = models.User(
         id = str(uuid.uuid4()),
         first_name = request.first_name,
@@ -31,3 +31,19 @@ def create_user(request: schemas.UserBase, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_user)
     return {"Status": "Success", "User": new_user}
+
+# FETCH ALL USERS AVAILABLE
+@router.get("/", status_code=status.HTTP_200_OK)
+async def get_all_users(db: Session = Depends(get_db)):
+    users = db.query(models.User).all()
+    if users is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    return {"Count" : len(users), "Users": users }
+
+
+@router.get("/{user_id}")
+async def get_single_user(user_id: str, db: Session = Depends(get_db)):
+    user = db.query(models.User).filter(models.User.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with an ID of {user_id} does not exist")
+    return user

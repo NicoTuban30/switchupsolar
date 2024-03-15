@@ -17,6 +17,7 @@ def patch_session_local(func):
 
 class TestUser(unittest.TestCase):
 
+    # TEST CREATION OF USER
     @patch_session_local
     def test_create_user(self, mock_session_local, mock_session):
         sample_request = {
@@ -69,11 +70,25 @@ class TestUser(unittest.TestCase):
         assert sample_request["electric_bill"] == response["User"]["electric_bill"]
         assert sample_request["electric_utility"] == response["User"]["electric_utility"]
         assert sample_request["roof_shade"] == response["User"]["roof_shade"]
-        # self.assertTrue(response["User"]["createdAt"])
+        print(len(response["User"]))
+        # self.assertIn("createdAt", response["User"])
         # assert response["User"]["updatedAt"]
-        print("CREATED AT", sample_request["createdAt"])
-        print("UPDATED AT", sample_request["updatedAt"])
+        # print("CREATED AT", response["User"]["createdAt"])
+        # print("UPDATED AT", response["User"]["updatedAt"])
         print("Response", response["User"]["id"])
+
+    # TEST Retrieval of all users
+    @patch_session_local
+    def test_read_all_users(self, mock_session_local, mock_session):
+        response = client.get('/api/users/')
+        assert response.status_code == 200
+
+    # TEST Retrieval of a single user
+    @patch_session_local
+    def test_read_single_user(self, mock_session_local, mock_session):
+        response = client.get(f"/api/users/{user_id}")
+        assert response.status_code == 200    
+    
         
 if __name__ == "__main__":
     unittest.main()

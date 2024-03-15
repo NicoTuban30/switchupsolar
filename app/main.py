@@ -8,7 +8,7 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 @app.get('/apihealthcheck')
-def get_api_status():
+async def get_api_status():
     return {"Message": "This API is Live!"}
 
 origins = [
