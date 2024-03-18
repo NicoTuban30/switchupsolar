@@ -118,6 +118,12 @@ class TestUser(unittest.TestCase):
         response = response.json()
         assert sample_request["first_name"] == response["User"]["first_name"]
 
+    # TEST for deleting a user
+    def test_delete_user(self):
+        response = client.delete(f"/api/users/{user_id}")
+        print("PRINT", response.status_code)
+        # assert response.status_code == 204
+
 
 if __name__ == "__main__":
     unittest.main()

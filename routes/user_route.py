@@ -60,7 +60,7 @@ async def get_single_user(user_id: str, db: Session = Depends(get_db)):
         )
 
 
-# UPDATE a single user
+# UPDATE A SINGLE USER
 @router.put("/{user_id}", status_code=status.HTTP_202_ACCEPTED)
 async def update_user(
     user_id: str, request: user_schema.UserBase, db: Session = Depends(get_db)
@@ -79,4 +79,25 @@ async def update_user(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"User with an ID of {user_id} does not exist",
+        )
+
+
+# DELETE A SINGLE USER
+@router.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_user(user_id: str, db: Session = Depends(get_db)):
+    try:
+        user_query = db.query(user_model.User).filter(user_model.User.id == user_id)
+        user = user_query.first()
+        if user is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"User with an ID of {user_id} does not exist!",
+            )
+        user_query.delete(synchronize_session=False)
+        db.commit()
+        return {"Status": "Success", "Message": "User deleted successfully!"}
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User with an ID of {user_id} does not exist!",
         )
