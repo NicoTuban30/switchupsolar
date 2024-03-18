@@ -1,15 +1,18 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app import user
-from app import models 
-from app.database import engine
 
-models.Base.metadata.create_all(bind=engine)
+from app.database import engine
+from models import user_model
+from routes import user_route
+
+user_model.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
-@app.get('/apihealthcheck')
+
+@app.get("/apihealthcheck")
 async def get_api_status():
     return {"Message": "This API is Live!"}
+
 
 origins = [
     "http://localhost:3000",
@@ -23,4 +26,4 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(user.router)
+app.include_router(user_route.router)

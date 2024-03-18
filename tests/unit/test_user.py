@@ -1,11 +1,14 @@
-from fastapi.testclient import TestClient
-from app.main import app
 import unittest
-from unittest.mock import patch, MagicMock
 import uuid
+from unittest.mock import MagicMock, patch
+
+from fastapi.testclient import TestClient
+
+from app.main import app
 
 client = TestClient(app)
 user_id = str(uuid.uuid4())
+
 
 def patch_session_local(func):
     @patch("app.database.SessionLocal")
@@ -13,7 +16,9 @@ def patch_session_local(func):
         mock_session = MagicMock()
         mock_session_local.return_value = mock_session
         return func(self, mock_session_local, mock_session)
+
     return wrapper
+
 
 class TestUser(unittest.TestCase):
 
@@ -29,11 +34,11 @@ class TestUser(unittest.TestCase):
             "city": "PLACEHOLDER",
             "state": "PLACEHOLDER",
             "zip_code": "PLACEHOLDER",
-            "electric_bill":  100,
+            "electric_bill": 100,
             "electric_utility": 100,
             "roof_shade": "PLACEHOLDER",
             "createdAt": "2023-03-17T00:04:32",
-            "updatedAt": None
+            "updatedAt": None,
         }
 
         response = client.post("/api/users/", json=sample_request)
@@ -68,27 +73,51 @@ class TestUser(unittest.TestCase):
         assert sample_request["state"] == response["User"]["state"]
         assert sample_request["zip_code"] == response["User"]["zip_code"]
         assert sample_request["electric_bill"] == response["User"]["electric_bill"]
-        assert sample_request["electric_utility"] == response["User"]["electric_utility"]
+        assert (
+            sample_request["electric_utility"] == response["User"]["electric_utility"]
+        )
         assert sample_request["roof_shade"] == response["User"]["roof_shade"]
-        print(len(response["User"]))
-        # self.assertIn("createdAt", response["User"])
-        # assert response["User"]["updatedAt"]
-        # print("CREATED AT", response["User"]["createdAt"])
-        # print("UPDATED AT", response["User"]["updatedAt"])
-        print("Response", response["User"]["id"])
 
     # TEST Retrieval of all users
-    @patch_session_local
-    def test_read_all_users(self, mock_session_local, mock_session):
-        response = client.get('/api/users/')
+    def test_read_all_users(self):
+        response = client.get("/api/users/")
         assert response.status_code == 200
+        # response = response.json()
+        # print(response)
 
     # TEST Retrieval of a single user
-    @patch_session_local
-    def test_read_single_user(self, mock_session_local, mock_session):
-        response = client.get(f"/api/users/{user_id}")
-        assert response.status_code == 200    
-    
-        
+    def test_read_single_user(self):
+        response = client.get("/api/users/463096093bd74b1491e1e49219df2833")
+        print(response.status_code)
+        assert response.status_code == 200
+        # response = response.json()
+        # print(response)
+
+    # TEST for updating a user
+    def test_update_user(self):
+        sample_request = {
+            "first_name": "hancock_kuja",
+            "last_name": "boa",
+            "phone_number": "12121",
+            "email": "hancock@example.com",
+            "street": "updated",
+            "city": "updated",
+            "state": "updated",
+            "zip_code": "updated",
+            "electric_bill": 200,
+            "electric_utility": 200,
+            "roof_shade": "white",
+            "createdAt": "2024-03-18T02:50:00.283Z",
+            "updatedAt": "2024-03-18T02:50:00.283Z",
+        }
+        response = client.put(
+            "/api/users/463096093bd74b1491e1e49219df2833", json=sample_request
+        )
+        # print(response.status_code)
+        assert response.status_code == 202
+        response = response.json()
+        assert sample_request["first_name"] == response["User"]["first_name"]
+
+
 if __name__ == "__main__":
     unittest.main()

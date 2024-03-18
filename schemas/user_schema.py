@@ -1,12 +1,12 @@
-from pydantic import BaseModel
 from datetime import datetime
-from uuid import uuid4
-from typing import Optional
+
+from pydantic import BaseModel
+
 
 class UserBase(BaseModel):
     id: str | None = None
     first_name: str
-    last_name: str 
+    last_name: str
     phone_number: str
     email: str
     street: str
@@ -35,7 +35,5 @@ class UserDisplay(BaseModel):
     createdAt: datetime
     updatedAt: datetime | None = None
 
-    class Config():
+    class Config:
         orm_mode = True
-
-

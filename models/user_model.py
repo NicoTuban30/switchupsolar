@@ -1,9 +1,12 @@
-from app.database import Base
-from sqlalchemy import TIMESTAMP, Column, String, Boolean, Integer
-from fastapi_utils.guid_type import GUID, GUID_DEFAULT_SQLITE
-from sqlalchemy.orm import validates
 import re
+
+from fastapi_utils.guid_type import GUID, GUID_DEFAULT_SQLITE
+from sqlalchemy import TIMESTAMP, Column, Integer, String
+from sqlalchemy.orm import validates
 from sqlalchemy.sql import func
+
+from app.database import Base
+
 
 class User(Base):
     __tablename__ = "users"
@@ -24,7 +27,7 @@ class User(Base):
     )
     updatedAt = Column(TIMESTAMP(timezone=True), default=None, onupdate=func.now())
 
-    @validates('email')
+    @validates("email")
     def validate_email(self, key, email):
         if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
             raise ValueError("Invalid email format")
