@@ -1,14 +1,15 @@
+import re
 from datetime import datetime
+from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, validator
 
 
 class UserBase(BaseModel):
-    id: str | None = None
     first_name: str
     last_name: str
     phone_number: str
-    email: str
+    email: EmailStr
     street: str
     city: str
     state: str
@@ -19,9 +20,18 @@ class UserBase(BaseModel):
     createdAt: datetime | None = None
     updatedAt: datetime | None = None
 
+    @validator("email")
+    def validate_email(cls, v):
+        if not re.match(r"^.+@.+\..+$", v):
+            raise ValueError("Invalid email address format")
+        if not v.endswith(".com"):
+            raise ValueError("Email must end with .com")
+        return v
+
 
 class UserDisplay(BaseModel):
-    email: str
+    id: UUID
+    email: EmailStr
     first_name: str
     last_name: str
     phone_number: str

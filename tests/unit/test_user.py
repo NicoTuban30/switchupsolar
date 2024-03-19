@@ -43,25 +43,7 @@ class TestUser(unittest.TestCase):
 
         response = client.post("/api/users/", json=sample_request)
         assert response.status_code == 201
-        # assert response.json() == {
-        #     "Status": "Success",
-        #     "User": {
-        #         "first_name": "PLACEHOLDER",
-        #         "phone_number": "999",
-        #         "street": "PLACEHOLDER",
-        #         "state": "PLACEHOLDER",
-        #         "electric_bill": 100,
-        #         "roof_shade": "PLACEHOLDER",
-        #         "updatedAt": None,
-        #         "email": "PLACEHOLDER@example.com",
-        #         "id": user_id,
-        #         "last_name": "PLACEHOLDER",
-        #         "city": "PLACEHOLDER",
-        #         "zip_code": "PLACEHOLDER",
-        #         "electric_utility": 100,
-        #         "createdAt": "2023-03-17T00:04:32"
-        #     },
-        # }
+
         response = response.json()
         assert response["User"]["id"]
         assert sample_request["first_name"] == response["User"]["first_name"]
@@ -87,7 +69,7 @@ class TestUser(unittest.TestCase):
 
     # TEST Retrieval of a single user
     def test_read_single_user(self):
-        response = client.get("/api/users/463096093bd74b1491e1e49219df2833")
+        response = client.get("/api/users/7685fe35b815414d88ea265d6b7fdc28")
         print(response.status_code)
         assert response.status_code == 200
         # response = response.json()
@@ -111,7 +93,7 @@ class TestUser(unittest.TestCase):
             "updatedAt": "2024-03-18T02:50:00.283Z",
         }
         response = client.put(
-            "/api/users/463096093bd74b1491e1e49219df2833", json=sample_request
+            "/api/users/7685fe35b815414d88ea265d6b7fdc28", json=sample_request
         )
         # print(response.status_code)
         assert response.status_code == 202
@@ -120,9 +102,9 @@ class TestUser(unittest.TestCase):
 
     # TEST for deleting a user
     def test_delete_user(self):
-        response = client.delete(f"/api/users/{user_id}")
+        response = client.delete("/api/users/7685fe35b815414d88ea265d6b7fdc28")
         print("PRINT", response.status_code)
-        # assert response.status_code == 204
+        assert response.status_code == 204
 
 
 if __name__ == "__main__":

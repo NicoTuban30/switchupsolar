@@ -1,5 +1,8 @@
 from fastapi import FastAPI
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from pydantic import ValidationError
 
 from app.database import engine
 from models import user_model
@@ -27,3 +30,21 @@ app.add_middleware(
 )
 
 app.include_router(user_route.router)
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request, exc):
+    errors = []
+    for error in exc.errors():
+        error_msg = {"msg": error["msg"]}
+        errors.append(error_msg)
+    return JSONResponse(status_code=400, content=errors)
+
+
+@app.exception_handler(ValidationError)
+async def validation_error_handler(request, exc):
+    errors = []
+    for error in exc.errors():
+        error_msg = {"msg": error["msg"]}
+        errors.append(error_msg)
+    return JSONResponse(status_code=400, content=errors)
