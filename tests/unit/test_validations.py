@@ -29,7 +29,7 @@ class TestValidation(unittest.TestCase):
             "first_name": "PLACEHOLDER",
             "last_name": "PLACEHOLDER",
             "phone_number": "999",
-            "email": "PLACEHOLDER@example.com",
+            "email": "PLACEHOLDER@example.COM",
             "street": "PLACEHOLDER",
             "city": "PLACEHOLDER",
             "state": "PLACEHOLDER",
@@ -45,4 +45,69 @@ class TestValidation(unittest.TestCase):
         assert response.status_code == 201
         object_response = response.json()
         assert object_response["User"]["email"]
-        print(object_response["User"]["email"])
+        assert object_response["User"]["email"].endswith(".com")
+        assert "@" in object_response["User"]["email"]
+
+    # Test email string requirements not fulfilled
+    @patch_session_local
+    def test_email_validation_failure(self, mock_session_local, mock_session):
+        sample_request = {
+            "first_name": "PLACEHOLDER",
+            "last_name": "PLACEHOLDER",
+            "phone_number": "999",
+            "email": "PLACEHOLDER",
+            "street": "PLACEHOLDER",
+            "city": "PLACEHOLDER",
+            "state": "PLACEHOLDER",
+            "zip_code": "PLACEHOLDER",
+            "electric_bill": 100,
+            "electric_utility": 100,
+            "roof_shade": "PLACEHOLDER",
+            "createdAt": "2023-03-17T00:04:32",
+            "updatedAt": None,
+        }
+
+        response = client.post("/api/users/", json=sample_request)
+        assert response.status_code == 400
+
+    # Test invalid or empty non nullable fields
+    @patch_session_local
+    def test_empty_nonNullable_fields(self, mock_session_local, mock_session):
+        sample_request = {
+            "first_name": "",
+            "last_name": "",
+            "phone_number": "",
+            "email": "",
+            "street": "PLACEHOLDER",
+            "city": "PLACEHOLDER",
+            "state": "PLACEHOLDER",
+            "zip_code": "PLACEHOLDER",
+            "electric_bill": 100,
+            "electric_utility": 100,
+            "roof_shade": "PLACEHOLDER",
+            "createdAt": "2023-03-17T00:04:32",
+            "updatedAt": None,
+        }
+        response = client.post("/api/users/", json=sample_request)
+        assert response.status_code == 400
+
+    # Test field required to be missing
+    @patch_session_local
+    def test_field_not_supplied(self, mock_session_local, mock_session):
+        sample_request = {
+            "first_name": "",
+            "last_name": "",
+            "phone_number": "",
+            # "email": "", // assume missing field
+            "street": "PLACEHOLDER",
+            "city": "PLACEHOLDER",
+            "state": "PLACEHOLDER",
+            "zip_code": "PLACEHOLDER",
+            "electric_bill": 100,
+            "electric_utility": 100,
+            "roof_shade": "PLACEHOLDER",
+            "createdAt": "2023-03-17T00:04:32",
+            "updatedAt": None,
+        }
+        response = client.post("/api/users/", json=sample_request)
+        assert response.status_code == 400

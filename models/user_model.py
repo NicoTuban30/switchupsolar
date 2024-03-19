@@ -1,5 +1,5 @@
 from fastapi_utils.guid_type import GUID, GUID_DEFAULT_SQLITE
-from sqlalchemy import TIMESTAMP, Column, Integer, String
+from sqlalchemy import TIMESTAMP, CheckConstraint, Column, Integer, String
 from sqlalchemy.sql import func
 
 from app.database import Base
@@ -23,3 +23,10 @@ class User(Base):
         TIMESTAMP(timezone=True), nullable=False, server_default=func.now()
     )
     updatedAt = Column(TIMESTAMP(timezone=True), default=None, onupdate=func.now())
+
+    __table_args__ = (
+        CheckConstraint("length(first_name) > 0", name="non_empty_first_name"),
+        CheckConstraint("length(last_name) > 0", name="non_empty_last_name"),
+        CheckConstraint("length(phone_number) > 0", name="non_empty_phone_number"),
+        CheckConstraint("length(email) > 0", name="non_empty_email"),
+    )
