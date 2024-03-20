@@ -36,7 +36,7 @@ async def register_user(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
-async def get_user_by_username(username: str, db: Session = Depends(get_db)):
+def get_user_by_username(username: str, db: Session = Depends(get_db)):
     user = (
         db.query(authuser_model.AuthUser)
         .filter(authuser_model.AuthUser.username == username)

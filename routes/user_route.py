@@ -18,7 +18,7 @@ router = APIRouter(prefix="/api/users", tags=["user"])
 async def create_user(
     request: user_schema.UserBase,
     db: Session = Depends(get_db),
-    current_user: authuser_schema = Depends(get_current_user),
+    # current_user: authuser_schema = Depends(get_current_user),
 ):
     try:
         new_user = user_model.User(
