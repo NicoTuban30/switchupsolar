@@ -6,13 +6,13 @@ from pydantic import ValidationError
 
 from app.database import engine
 from models import user_model
-from routes import user_route
+from routes import authuser_route, user_route
 
 user_model.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 
-@app.get("/apihealthcheck")
+@app.get("/apihealthcheck", tags=["test"])
 async def get_api_status():
     return {"Message": "This API is Live!"}
 
@@ -30,6 +30,7 @@ app.add_middleware(
 )
 
 app.include_router(user_route.router)
+app.include_router(authuser_route.router)
 
 
 @app.exception_handler(RequestValidationError)
