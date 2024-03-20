@@ -6,15 +6,20 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.database import get_db
+from auth.oauth2 import get_current_user
 from models import user_model
-from schemas import user_schema
+from schemas import authuser_schema, user_schema
 
 router = APIRouter(prefix="/api/users", tags=["user"])
 
 
 # CREATE A USER
 @router.post("/", status_code=status.HTTP_201_CREATED)
-async def create_user(request: user_schema.UserBase, db: Session = Depends(get_db)):
+async def create_user(
+    request: user_schema.UserBase,
+    db: Session = Depends(get_db),
+    current_user: authuser_schema = Depends(get_current_user),
+):
     try:
         new_user = user_model.User(
             id=str(uuid.uuid4()),
@@ -48,7 +53,10 @@ async def create_user(request: user_schema.UserBase, db: Session = Depends(get_d
 @router.get(
     "/", status_code=status.HTTP_200_OK, response_model=List[user_schema.UserDisplay]
 )
-async def get_all_users(db: Session = Depends(get_db)):
+async def get_all_users(
+    db: Session = Depends(get_db),
+    current_user: authuser_schema = Depends(get_current_user),
+):
     users = db.query(user_model.User).all()
     if users is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
@@ -57,7 +65,11 @@ async def get_all_users(db: Session = Depends(get_db)):
 
 # FETCH A SINGLE USER
 @router.get("/{user_id}", response_model=user_schema.UserDisplay)
-async def get_single_user(user_id: str, db: Session = Depends(get_db)):
+async def get_single_user(
+    user_id: str,
+    db: Session = Depends(get_db),
+    current_user: authuser_schema = Depends(get_current_user),
+):
     try:
         user = db.query(user_model.User).filter(user_model.User.id == user_id).first()
         if user is None:
@@ -76,7 +88,10 @@ async def get_single_user(user_id: str, db: Session = Depends(get_db)):
 # UPDATE A SINGLE USER
 @router.put("/{user_id}", status_code=status.HTTP_202_ACCEPTED)
 async def update_user(
-    user_id: str, request: user_schema.UserBase, db: Session = Depends(get_db)
+    user_id: str,
+    request: user_schema.UserBase,
+    db: Session = Depends(get_db),
+    current_user: authuser_schema = Depends(get_current_user),
 ):
     try:
         user_query = db.query(user_model.User).filter(user_model.User.id == user_id)
@@ -97,7 +112,11 @@ async def update_user(
 
 # DELETE A SINGLE USER
 @router.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_user(user_id: str, db: Session = Depends(get_db)):
+async def delete_user(
+    user_id: str,
+    db: Session = Depends(get_db),
+    current_user: authuser_schema = Depends(get_current_user),
+):
     try:
         user_query = db.query(user_model.User).filter(user_model.User.id == user_id)
         user = user_query.first()

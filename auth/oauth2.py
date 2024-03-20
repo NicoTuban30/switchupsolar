@@ -10,13 +10,13 @@ from jose.exceptions import JWTError
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from routes import user_route
+from routes import authuser_route
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 SECRET_KEY = config("secret")
 ALGORITHM = config("algorithm")
-ACCESS_TOKEN_EXPIRE_MINUTES = 1440
+# ACCESS_TOKEN_EXPIRE_MINUTES = 1440
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
@@ -41,13 +41,13 @@ def get_current_user(
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
-        # print(username)
+        print(username)
         if username is None:
             raise credentials_exception
     except JWTError:
         raise credentials_exception
 
-    user = user_route.get_user_by_username(db, username)
+    user = authuser_route.get_user_by_username(username, db)
 
     if user is None:
         raise credentials_exception

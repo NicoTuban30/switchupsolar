@@ -5,6 +5,7 @@ from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 
 from app.database import engine
+from auth import authentication_route
 from models import user_model
 from routes import authuser_route, user_route
 
@@ -31,6 +32,7 @@ app.add_middleware(
 
 app.include_router(user_route.router)
 app.include_router(authuser_route.router)
+app.include_router(authentication_route.router)
 
 
 @app.exception_handler(RequestValidationError)

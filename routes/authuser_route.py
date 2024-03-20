@@ -34,3 +34,17 @@ async def register_user(
     except Exception as e:
         # Catch any other unexpected exceptions and provide a generic error message
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+
+async def get_user_by_username(username: str, db: Session = Depends(get_db)):
+    user = (
+        db.query(authuser_model.AuthUser)
+        .filter(authuser_model.AuthUser.username == username)
+        .first()
+    )
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User with username {username} not found",
+        )
+    return user
