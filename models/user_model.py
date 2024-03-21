@@ -1,5 +1,5 @@
 from fastapi_utils.guid_type import GUID, GUID_DEFAULT_SQLITE
-from sqlalchemy import TIMESTAMP, CheckConstraint, Column, Integer, String
+from sqlalchemy import TIMESTAMP, CheckConstraint, Column, Integer, String, text
 from sqlalchemy.sql import func
 
 from app.database import Base
@@ -31,4 +31,7 @@ class User(Base):
         CheckConstraint("length(email) >= 0", name="non_empty_email"),
         CheckConstraint("electric_bill >= 0", name="non_empty_electric_bill"),
         CheckConstraint("electric_utility >= 0", name="non_empty_electric_utility"),
+        CheckConstraint(
+            text("phone_number REGEXP '^[0-9]+$'"), name="phone_number_must_be_integer"
+        ),
     )

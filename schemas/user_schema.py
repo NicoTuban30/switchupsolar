@@ -20,7 +20,7 @@ class UserBase(BaseModel):
     updatedAt: datetime | None = None
 
 
-# to contain no createdAt field
+# to contain no createdAt field for update
 class UserBaseUpdate(BaseModel):
     first_name: str
     last_name: str
