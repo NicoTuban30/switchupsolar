@@ -28,5 +28,7 @@ class User(Base):
         CheckConstraint("length(first_name) > 0", name="non_empty_first_name"),
         CheckConstraint("length(last_name) > 0", name="non_empty_last_name"),
         CheckConstraint("length(phone_number) > 0", name="non_empty_phone_number"),
-        CheckConstraint("length(email) > 0", name="non_empty_email"),
+        CheckConstraint("length(email) >= 0", name="non_empty_email"),
+        CheckConstraint("electric_bill >= 0", name="non_empty_electric_bill"),
+        CheckConstraint("electric_utility >= 0", name="non_empty_electric_utility"),
     )
