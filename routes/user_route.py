@@ -89,7 +89,7 @@ async def get_single_user(
 @router.put("/{user_id}", status_code=status.HTTP_202_ACCEPTED)
 async def update_user(
     user_id: str,
-    request: user_schema.UserBase,
+    request: user_schema.UserBaseUpdate,
     db: Session = Depends(get_db),
     current_user: authuser_schema = Depends(get_current_user),
 ):

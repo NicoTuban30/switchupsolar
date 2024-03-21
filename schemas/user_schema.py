@@ -20,6 +20,22 @@ class UserBase(BaseModel):
     updatedAt: datetime | None = None
 
 
+# to contain no createdAt field
+class UserBaseUpdate(BaseModel):
+    first_name: str
+    last_name: str
+    phone_number: str
+    email: EmailStr
+    street: str
+    city: str
+    state: str
+    zip_code: str
+    electric_bill: int
+    electric_utility: int
+    roof_shade: str
+    updatedAt: datetime | None = None
+
+
 class UserDisplay(BaseModel):
     id: UUID
     email: EmailStr
