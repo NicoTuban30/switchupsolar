@@ -7,7 +7,7 @@ from app.database import Base
 
 class AuthUser(Base):
     __tablename__ = "auth_users"
-    id = Column(GUID, primary_key=True, default=GUID_DEFAULT_SQLITE)
+    id = Column(GUID, primary_key=True, default=GUID_DEFAULT_SQLITE, unique=True)
     username = Column(String, nullable=False)
     password = Column(String, nullable=False)
     createdAt = Column(

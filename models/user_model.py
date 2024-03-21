@@ -7,7 +7,7 @@ from app.database import Base
 
 class User(Base):
     __tablename__ = "users"
-    id = Column(GUID, primary_key=True, default=GUID_DEFAULT_SQLITE)
+    id = Column(GUID, primary_key=True, default=GUID_DEFAULT_SQLITE, unique=True)
     first_name = Column(String(20), nullable=False)
     last_name = Column(String(20), nullable=False)
     phone_number = Column(String, nullable=False)

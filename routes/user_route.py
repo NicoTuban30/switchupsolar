@@ -103,6 +103,11 @@ async def update_user(
         db.commit()
         db.refresh(user)
         return {"Status": "Success", "User": user}
+    except IntegrityError:
+        # Catch IntegrityError, which might occur if there's a unique constraint violation
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Fill-up Fields Correctly!"
+        )
     except Exception:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
