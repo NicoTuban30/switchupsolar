@@ -5,6 +5,7 @@ from sqlalchemy.sql import func
 from app.database import Base
 
 
+# Database model for "User's" fields // can only be accessed once you are authenticated
 class User(Base):
     __tablename__ = "users"
     id = Column(GUID, primary_key=True, default=GUID_DEFAULT_SQLITE, unique=True)

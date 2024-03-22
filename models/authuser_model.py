@@ -5,6 +5,7 @@ from sqlalchemy.sql import func
 from app.database import Base
 
 
+# Database model for Authenticated or Registered user // For authentication fields
 class AuthUser(Base):
     __tablename__ = "auth_users"
     id = Column(GUID, primary_key=True, default=GUID_DEFAULT_SQLITE, unique=True)

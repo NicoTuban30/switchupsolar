@@ -16,6 +16,7 @@ router = APIRouter(tags=["authentication"])
 async def get_token(
     request: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
 ):
+    # find valid existing user in the authusers database
     user = (
         db.query(authuser_model.AuthUser)
         .filter(authuser_model.AuthUser.username == request.username)

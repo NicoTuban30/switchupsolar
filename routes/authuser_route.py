@@ -11,6 +11,7 @@ from schemas import authuser_schema
 router = APIRouter(prefix="/api/auth", tags=["authuser"])
 
 
+# Enpoint for registration of user to be used as a valid user for authentication later on
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def register_user(
     request: authuser_schema.AuthSchema, db: Session = Depends(get_db)
@@ -33,6 +34,7 @@ async def register_user(
         )
 
 
+# obtaining a user with that username to be used in the authentication
 def get_user_by_username(username: str, db: Session = Depends(get_db)):
     user = (
         db.query(authuser_model.AuthUser)
