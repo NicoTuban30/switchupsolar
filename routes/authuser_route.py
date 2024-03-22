@@ -1,7 +1,6 @@
 import uuid
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -26,14 +25,12 @@ async def register_user(
         db.commit()
         db.refresh(new_authenticated_user)
         return {"Registration Complete", new_authenticated_user}
-    except IntegrityError:
+    except Exception:
         # Catch IntegrityError, which might occur if there's a unique constraint violation
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Fill-up Fields Correctly!"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="An error occurred while creating the user!",
         )
-    except Exception as e:
-        # Catch any other unexpected exceptions and provide a generic error message
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
 def get_user_by_username(username: str, db: Session = Depends(get_db)):

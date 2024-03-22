@@ -2,7 +2,6 @@ import uuid
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -18,8 +17,9 @@ router = APIRouter(prefix="/api/users", tags=["user"])
 async def create_user(
     request: user_schema.UserBase,
     db: Session = Depends(get_db),
-    # current_user: authuser_schema = Depends(get_current_user),
+    current_user: authuser_schema = Depends(get_current_user),
 ):
+
     try:
         new_user = user_model.User(
             id=str(uuid.uuid4()),
@@ -39,14 +39,12 @@ async def create_user(
         db.commit()
         db.refresh(new_user)
         return {"Status": "Success", "User": new_user}
-    except IntegrityError:
+    except Exception:
         # Catch IntegrityError, which might occur if there's a unique constraint violation
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Fill-up Fields Correctly!"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="An error occurred while creating the user!",
         )
-    except Exception as e:
-        # Catch any other unexpected exceptions and provide a generic error message
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
 # FETCH ALL USERS AVAILABLE
@@ -103,15 +101,11 @@ async def update_user(
         db.commit()
         db.refresh(user)
         return {"Status": "Success", "User": user}
-    except IntegrityError:
+    except Exception:
         # Catch IntegrityError, which might occur if there's a unique constraint violation
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Fill-up Fields Correctly!"
-        )
-    except Exception:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"User with an ID of {user_id} does not exist",
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="An error occurred while creating the user!",
         )
 
 

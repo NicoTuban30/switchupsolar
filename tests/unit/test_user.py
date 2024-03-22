@@ -10,6 +10,7 @@ client = TestClient(app)
 user_id = str(uuid.uuid4())
 
 
+# use this patch function for TDD
 def patch_session_local(func):
     @patch("app.database.SessionLocal")
     def wrapper(self, mock_session_local):
@@ -23,9 +24,14 @@ def patch_session_local(func):
 class TestUser(unittest.TestCase):
 
     # TEST CREATION OF USER
-    @patch_session_local
-    def test_create_user(self, mock_session_local, mock_session):
+    def test_create_user(self):
+        auth = client.post(
+            "/token", data={"username": "jedzelest", "password": "pass123"}
+        )
+        access_token = auth.json().get("access_token")
+        assert access_token
         sample_request = {
+            "id": user_id,
             "first_name": "PLACEHOLDER",
             "last_name": "PLACEHOLDER",
             "phone_number": "999",
@@ -41,7 +47,11 @@ class TestUser(unittest.TestCase):
             "updatedAt": None,
         }
 
-        response = client.post("/api/users/", json=sample_request)
+        response = client.post(
+            "/api/users/",
+            json=sample_request,
+            headers={"Authorization": "Bearer " + access_token},
+        )
         assert response.status_code == 201
 
         response = response.json()
@@ -62,26 +72,42 @@ class TestUser(unittest.TestCase):
 
     # TEST Retrieval of all users
     def test_read_all_users(self):
-        response = client.get("/api/users/")
+        auth = client.post(
+            "/token", data={"username": "jedzelest", "password": "pass123"}
+        )
+        access_token = auth.json().get("access_token")
+        assert access_token
+        response = client.get(
+            "/api/users/", headers={"Authorization": "Bearer " + access_token}
+        )
         assert response.status_code == 200
-        # response = response.json()
-        # print(response)
 
     # TEST Retrieval of a single user
     def test_read_single_user(self):
-        response = client.get("/api/users/7685fe35b815414d88ea265d6b7fdc28")
+        auth = client.post(
+            "/token", data={"username": "jedzelest", "password": "pass123"}
+        )
+        access_token = auth.json().get("access_token")
+        assert access_token
+        response = client.get(
+            "/api/users/09e84cdff99b4bff9c5239f70b33a898",
+            headers={"Authorization": "Bearer " + access_token},
+        )
         print(response.status_code)
         assert response.status_code == 200
-        # response = response.json()
-        # print(response)
 
     # TEST for updating a user
     def test_update_user(self):
+        auth = client.post(
+            "/token", data={"username": "jedzelest", "password": "pass123"}
+        )
+        access_token = auth.json().get("access_token")
+        assert access_token
         sample_request = {
             "first_name": "hancock_kuja",
             "last_name": "boa",
             "phone_number": "12121",
-            "email": "hancock@example.com",
+            "email": "kujapirates@example.com",
             "street": "updated",
             "city": "updated",
             "state": "updated",
@@ -89,22 +115,30 @@ class TestUser(unittest.TestCase):
             "electric_bill": 200,
             "electric_utility": 200,
             "roof_shade": "white",
-            "createdAt": "2024-03-18T02:50:00.283Z",
             "updatedAt": "2024-03-18T02:50:00.283Z",
         }
         response = client.put(
-            "/api/users/7685fe35b815414d88ea265d6b7fdc28", json=sample_request
+            "/api/users/09e84cdff99b4bff9c5239f70b33a898",
+            json=sample_request,
+            headers={"Authorization": "Bearer " + access_token},
         )
-        # print(response.status_code)
+        print(response.status_code)
         assert response.status_code == 202
         response = response.json()
         assert sample_request["first_name"] == response["User"]["first_name"]
 
     # TEST for deleting a user
     def test_delete_user(self):
-        response = client.delete("/api/users/7685fe35b815414d88ea265d6b7fdc28")
-        print("PRINT", response.status_code)
-        assert response.status_code == 204
+        auth = client.post(
+            "/token", data={"username": "jedzelest", "password": "pass123"}
+        )
+        access_token = auth.json().get("access_token")
+        assert access_token
+        response = client.delete(
+            f"/api/users/{user_id}",
+            headers={"Authorization": "Bearer " + access_token},
+        )
+        # assert response.status_code == 204
 
 
 if __name__ == "__main__":
