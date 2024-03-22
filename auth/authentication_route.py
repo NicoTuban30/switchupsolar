@@ -12,7 +12,7 @@ router = APIRouter(tags=["authentication"])
 
 
 # token route
-@router.post("/token")
+@router.post("/token", status_code=status.HTTP_201_CREATED)
 async def get_token(
     request: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
 ):

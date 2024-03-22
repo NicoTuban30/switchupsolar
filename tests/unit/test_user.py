@@ -138,7 +138,8 @@ class TestUser(unittest.TestCase):
             f"/api/users/{user_id}",
             headers={"Authorization": "Bearer " + access_token},
         )
-        # assert response.status_code == 204
+        # print(response.json())
+        assert response.status_code == 404
 
 
 if __name__ == "__main__":
