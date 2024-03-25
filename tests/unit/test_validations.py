@@ -24,6 +24,7 @@ def patch_session_local(func):
 
 class TestValidation(unittest.TestCase):
 
+    # Test auth credentials to be valid
     def test_authenticated_user_with_valid_credentials(self):
         auth = client.post(
             "/token", data={"username": "jedzelest", "password": "pass123"}

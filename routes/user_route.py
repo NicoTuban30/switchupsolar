@@ -105,7 +105,7 @@ async def update_user(
         # Catch IntegrityError, which might occur if there's a unique constraint violation
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="An error occurred while creating the user!",
+            detail="An error occurred while updating the user!",
         )
 
 
